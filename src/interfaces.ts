@@ -25,8 +25,10 @@ interface Comic {
          path: string;
          extension: string;
       }
+      length?: number
    },
-   title: string
+   title: string,
+   description?: string
 }
 interface Character {
    name: string,
