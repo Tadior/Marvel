@@ -1,90 +1,92 @@
 import './styles/style.scss';
 import { characterWrapper, apiKey, baseUrl, searchByComic, searchByCharacter, searchByNameStart, navigations, mainContainer } from './variables';
-import { DataResult, arrayOfObjects, Comic, Character } from './interfaces';
+import { DataResult, arrayOfObjects, Comic, Character, ArrayOfComics, ArrayOfCharacters } from './interfaces';
 
 const request = (url: string): Promise<DataResult> => {
    let out = fetch(url).then(info => info.json());
    return out;
 }
+let checkedComics: ArrayOfComics[] = [];
+let checkedCharacters: ArrayOfCharacters[] = [];
+let limitValue = 100;
+let offsetValue = 0;
 
 function main(searchBy: string) {
-
-   const getRequest = request(`${baseUrl}/public/${searchBy}?apikey=${apiKey}`);
-   //const getRequest = request(`${baseUrl}/public/characters?orderBy=-modified&offset=20&apikey=${apiKey}`);
+   const getRequest = request(`${baseUrl}/public/${searchBy}?limit=${limitValue}&offset=${offsetValue}&apikey=${apiKey}`);
    preloader();
    getRequest.then((response) => {
       const responseResult = response.data.results;
-      //console.log(response)
-      clearElement(characterWrapper)
+      clearElement(characterWrapper);
+      //limitValue = limitValue + 20;
       switch (searchBy) {
          case 'comics':
             for (let item in responseResult) {
                checkItem(responseResult[item]);
-               //console.log(itemData)
-               //createItem(responseResult[item])
-               //createItem(checkedItems)
-               //console.log(checkedItems)
             }
+            createItems(checkedComics)
             break;
          case 'characters':
             for (let item in responseResult) {
                checkItem(responseResult[item]);
-               //createItem(responseResult[item]);
-               //createItem(checkedItems);
             }
-            break
+            createItems(checkedCharacters)
+            break;
       }
    })
 }
-let checkedItems: object[] = [];
 //let checkedItems: Comic  = [];
 main(searchByComic);
-function checkItem(item: Comic) {
-   //let checkedItems: object[] = [];
-   if (item.images.length !== 0 && !item.images[0].path.includes('unavailable')) {
-      if (item.description !== '' && item.description !== '#N/A') {
-         checkedItems.push(item);
-         return checkedItems;
-         //console.log(checkedItems)
+function checkItem(item: Comic): void;
+function checkItem(item: Character): void;
+function checkItem(item): void {
+   if ('images' in item) {
+      //console.log(item.images.length)
+      if (item.images.length !== 0 && !item.images[0].path.includes('not_available')) {
+         if (item.description !== '' && item.description !== '#N/A') {
+            checkedComics.push(item);
+         }
       }
-   }
-   //console.log(checkedItems)
-   return checkedItems;
+   } else
+      if ('thumbnail' in item) {
+         //console.log(item)
+         if (item.thumbnail.length !== 0 && !item.thumbnail.path.includes('not_available')) {
+            if (item.description !== '' && item.description !== '#N/A') {
+               checkedCharacters.push(item);
+            }
+         }
+      }
 }
 //----------------------------------------
-function createItem(item: Comic): void; //Overload
-function createItem(item: Character): void; //Overload
-function createItem(item): any { //Overload main function
+function createItems(item: ArrayOfComics[]): void; //Overload
+function createItems(item: ArrayOfCharacters[]): void; //Overload
+function createItems(item): any { //Overload main function
    let imagePath: string;
    let extension: string;
    let title: string;
-   if (item.name) {
-      let character = item.thumbnail.path;
-      if (character.match(/image_not_available/)) {
-         return false
+   item.forEach(element => {
+      if ('name' in element) {
+         console.log(element)
+         imagePath = element.thumbnail.path;
+         extension = element.thumbnail.extension;
+         title = element.name;
+      } else if ('title' in element) {
+         console.log(element.title)
+         imagePath = element.images[0].path;
+         extension = element.images[0].extension;
+         title = element.title;
       }
-      imagePath = item.thumbnail.path;
-      extension = item.thumbnail.extension;
-      title = item.name;
-   } else {
-      if (typeof item.images[0] !== typeof undefined) {
-         imagePath = item.images[0].path;
-         extension = item.images[0].extension;
-         title = item.title;
-      } else {
-         return false;
-      }
-   }
-   characterWrapper.innerHTML += `
-      <div class="character-item">
-         <div class="character-item__picture">
-            <img src="${imagePath}.${extension}" alt="${title}" srcset="">
+
+      characterWrapper.innerHTML += `
+         <div class="character-item">
+            <div class="character-item__picture">
+               <img src="${imagePath}.${extension}" alt="${title}" srcset="">
+            </div>
+            <div class="character-item__name">
+               ${title}
+            </div>
          </div>
-         <div class="character-item__name">
-            ${title}
-         </div>
-      </div>
-   `
+         `
+   });
 }
 //------------------------------------------
 
@@ -144,7 +146,8 @@ function search(input) {
    getRequest.then(response => {
       const responseResult = response.data.results;
       for (let item in responseResult) {
-         createItem(responseResult[item]);
+         //createItem(responseResult[item]);
+         //createItems(responseResult[item]);
       }
    })
 }

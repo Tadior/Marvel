@@ -13,6 +13,16 @@ interface DataResult {
       }
    }
 }
+interface ArrayOfComics extends Comic {
+   [index: number]: {
+
+   }
+}
+interface ArrayOfCharacters extends Character {
+   [index: number]: {
+
+   }
+}
 interface arrayOfObjects {
    [index: number]: {
       path: string;
@@ -37,4 +47,4 @@ interface Character {
       extension: string;
    }
 }
-export type { DataResult, arrayOfObjects, Comic, Character };
+export type { DataResult, arrayOfObjects, Comic, Character, ArrayOfComics, ArrayOfCharacters };
