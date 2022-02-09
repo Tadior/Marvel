@@ -1,22 +1,33 @@
 interface DataResult {
    data: {
       results: {
-         [key: number]: {
-            images: arrayOfObjects,
-            title: string,
-            thumbnail: {
-               extension: string,
-               path: string
-            },
-            name: string
-         };
+         //[key: number]: {
+         //   images: arrayOfObjects,
+         //   title: string,
+         //   thumbnail: {
+         //      extension: string,
+         //      path: string
+         //   },
+         //   name: string
+         //};
       }
    }
 }
+interface DataResultArray extends DataResult {
+   [key: number]: {
+      images: arrayOfObjects,
+      title: string,
+      thumbnail: {
+         extension: string,
+         path: string
+      },
+      name: string
+   };
+}
 interface ArrayOfComics extends Comic {
-   [index: number]: {
+   [index: number]: [
 
-   }
+   ]
 }
 interface ArrayOfCharacters extends Character {
    [index: number]: {
