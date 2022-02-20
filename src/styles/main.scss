@@ -6,6 +6,8 @@
    background: url(../assets/img/background.jpg) center top no-repeat;
    background-attachment: fixed;
    padding-bottom: 30px;
+   position: relative;
+   overflow: hidden;
    //height: 100%;
 }
 .character-wrapper {
@@ -16,6 +18,7 @@
    //height: calc(100vh - 49px);
 }
 .character-item {
+   cursor: pointer;
    max-width: 300px;
    margin: 10px 15px 0 15px;
    background: #fff;
@@ -80,5 +83,70 @@
    &--active {
       background: red;
       color: #fff;
+   }
+}
+.item-card {
+   position: fixed;
+   top: 0;
+   left: 100%;
+   right: -100%;
+   background: rgba(0,0,0,.9);
+   transition: all ease 1s;
+   height: 100vh;
+   //height: 100vh;
+   &__blocks {
+      position: relative;
+      padding: 20px 0 0 0;
+      display: flex;
+      justify-content: center;
+      margin: 0 -15px;
+   }
+
+
+   &__block {
+      margin: 0 15px;
+   }
+
+
+   &__image {
+      flex: 0 1 30%;
+      img {
+         max-width: 100%;
+      }
+   }
+
+
+   &__info {
+      flex: 0 1 55%;
+      padding: 15px;
+      background: #fff;
+   }
+
+   &__title {
+      font-weight: bold;
+   }
+   &-container {
+      margin: 40px auto 0;
+      max-width: 1300px;
+      padding: 20px;
+   }
+
+   &__description {
+      margin-top: 20px;
+      font-weight: 500;
+   }
+   &--active {
+      left: 0;
+      right: 0;
+      transition: all ease 1s;
+   }
+   &--close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: url(../assets/img/close.png) center center / cover no-repeat;
+      width: 40px;
+      height: 40px;
+      z-index: 2;
    }
 }

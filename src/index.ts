@@ -1,7 +1,7 @@
 import './styles/style.scss';
 import {
    characterWrapper, apiKey, baseUrl, searchByComic, searchByCharacter, searchByNameStart, navigations, mainContainer
-   //limitValue, offsetComicValue, offsetCharacterValue, paginationContainer, paginationItem 
+   //limitValue, offsetComicValue, offsetCharacterValue, paginationContainer, paginationItem
 } from './variables';
 
 interface DataResult {
@@ -53,7 +53,7 @@ function getTwelve(url) {
          if (array[0].images) {
             mainBlock: {
                for (let key in array as Comic) {
-                  if (dataResult[key].description !== '#N/A' && dataResult[key].description !== '' && typeof dataResult[key].description !== undefined && dataResult[key].images[0] !== undefined && !dataResult[key].images[0].path.includes('image_not_available')) {
+                  if (dataResult[key].description !== '#N/A' && dataResult[key].description !== '' && dataResult[key].description !== null && typeof dataResult[key].description !== undefined && dataResult[key].images[0] !== undefined && !dataResult[key].images[0].path.includes('image_not_available')) {
                      if (checkedItems.length === 12) {
                         return undefined
                      }
@@ -69,7 +69,7 @@ function getTwelve(url) {
          } else {
             mainBlock: {
                for (let key in array as Character) {
-                  if (dataResult[key].description !== '#N/A' && dataResult[key].description !== '' && typeof dataResult[key].description !== undefined && !dataResult[key].thumbnail.path.includes('image_not_available')) {
+                  if (dataResult[key].description !== '#N/A' && dataResult[key].description !== '' && dataResult[key].description !== null && typeof dataResult[key].description !== undefined && !dataResult[key].thumbnail.path.includes('image_not_available')) {
                      if (checkedItems.length === 12) {
                         return undefined
                      }
@@ -110,7 +110,8 @@ function show(url: string) {
          items = checkedCharacters[checkedOffset]
       }
       for (let item of items) {
-         setItem(item)
+         setItem.bind(item)(item)
+         //console.log(item)
       }
    })
 }
@@ -131,7 +132,8 @@ navigations.addEventListener('click', (event) => {
          if (checkedComics.length !== 0) {
             characterWrapper.innerHTML = '';
             for (let item of checkedComics[0]) {
-               setItem(item)
+               //setItem(item)
+               setItem.bind(item)(item)
             }
 
          } else {
@@ -151,7 +153,7 @@ navigations.addEventListener('click', (event) => {
          if (checkedCharacters.length !== 0) {
             characterWrapper.innerHTML = '';
             for (let item of checkedCharacters[0]) {
-               setItem(item)
+               setItem.bind(item)(item)
             }
          } else {
             show(`${baseUrl}/public/characters?offset=${offset}?limit=20&apikey=${apiKey}`)
@@ -162,18 +164,48 @@ navigations.addEventListener('click', (event) => {
 })
 
 function setItem(item) {
+   console.log(this)
    let imagePath = item.images ? item.images[0].path : item.thumbnail.path
    let extension = item.images ? item.images[0].extension : item.thumbnail.extension;
    let title = item.name ? item.name : item.title;
-   characterWrapper.innerHTML += `
-   <div class="character-item">
-      <div class="character-item__picture">
-         <img src="${imagePath}.${extension}" alt="${title}" srcset="">
-      </div>
-      <div class="character-item__name">
-         ${title}
-      </div>
+   const newItem = document.createElement('div');
+   newItem.classList.add('character-item');
+   newItem.innerHTML = `
+   <div class="character-item__picture">
+      <img src="${imagePath}.${extension}" alt="${title}" srcset="">
    </div>
-   `;
+   <div class="character-item__name">
+      ${title}
+   </div>
+   `
+   newItem.addEventListener('click', () => openCardDescription(this))
+   console.log(newItem)
+   characterWrapper.append(newItem);
+}
+function openCardDescription(cardInfo: Character)
+function openCardDescription(cardInfo: Comic)
+function openCardDescription(cardInfo) {
+   card.classList.add('item-card--active');
+   let title: string;
+   let description = cardInfo.description;
+   let image = cardInfo.thumbnail.path + '.' + cardInfo.thumbnail.extension
+   cardInfo.title ? title = cardInfo.title : title = cardInfo.name;
+   cardImg.src = image;
+   console.log(cardImg)
+   console.log(description)
+   cardTitle.innerHTML = title;
+   cardDescription.innerHTML = description;
 }
 
+const card = document.getElementById('card-description');
+const cardImg: HTMLImageElement = card.querySelector('.item-card__img');
+const cardTitle = card.querySelector('.item-card__title');
+const cardDescription = card.querySelector('.item-card__description');
+const cardClose = card.querySelector('.item-card--close');
+
+cardClose.addEventListener('click', () => {
+   console.log('done')
+   card.classList.remove('item-card--active')
+});
+
+//document.querySelector('#re').addEventListener('click', () => cardDescription.classList.add('item-card--active'))
