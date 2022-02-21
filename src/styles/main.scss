@@ -54,9 +54,15 @@
    background: red;
 }
 .preloader {
-   max-width: 100px;
-   margin: auto auto;
-   height: calc(100vh - 49px);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   text-align: center;
+   width: 100%;
+   height: calc(100vh - 110px);
+   &-image {
+      max-width: 150px;
+   }
 }
 .pagination {
    display: flex;
@@ -68,9 +74,6 @@
       margin: 0 5px;
       cursor: pointer;
       border: 2px solid black;
-      &:hover {
-         border-color: red;
-      }
    }
    &--arrow {
       cursor: pointer;

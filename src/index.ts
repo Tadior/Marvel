@@ -4,6 +4,15 @@ import {
    //limitValue, offsetComicValue, offsetCharacterValue, paginationContainer, paginationItem
 } from './variables';
 
+const isComic = (): boolean => {
+   //navigations.querySelector('.nav--active').getAttribute('data-setting') === 'comic' ? return true : false;
+   if (navigations.querySelector('.nav--active').getAttribute('data-setting') === 'comic') {
+      return true;
+   } else {
+      return false;
+   }
+}
+
 interface DataResult {
    data: {
       results: {
@@ -13,10 +22,11 @@ interface DataResult {
 }
 interface ArrayOfDataResult extends DataResult {
    [key: number]: {
-      id: number
+      //id: number
    }
 }
 interface DataResultItem extends ArrayOfDataResult {
+   id: number;
    thumbnail: {
       path: string;
       extension: string;
@@ -42,12 +52,14 @@ const checkedItems = [];
 let checkedOffset = 0;
 let offset = 0;
 function getTwelve(url) {
+   setPreloader();
    function getResponse(url): Promise<DataResult> {
       let response = fetch(url).then(data => data.json());
       return response;
    }
    return getResponse(url).then(response => {
       const dataResult = response.data.results as DataResult;
+      characterWrapper.innerHTML = '';
 
       function sort(array: DataResult): void {
          if (array[0].images) {
@@ -88,11 +100,11 @@ function getTwelve(url) {
       sort(dataResult)
 
       if (checkedItems.length !== 12) {
-         offset += 20;
-         if (navigations.querySelector('.nav--active').getAttribute('data-setting') === 'comic') {
-            return getTwelve(`${baseUrl}/public/comics?offset=${offset}?limit=20&apikey=${apiKey}`)
+         offset += 30;
+         if (isComic() === true) {
+            return getTwelve(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`)
          } else {
-            return getTwelve(`${baseUrl}/public/characters?offset=${offset}?limit=20&apikey=${apiKey}`)
+            return getTwelve(`${baseUrl}/public/characters?offset=${offset}?limit=30&apikey=${apiKey}`)
          }
       }
    })
@@ -115,7 +127,7 @@ function show(url: string) {
       }
    })
 }
-show(`${baseUrl}/public/comics?offset=${offset}?limit=20&apikey=${apiKey}`)
+show(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`)
 //---------------------Navigation--------------------------------------------------
 navigations.addEventListener('click', (event) => {
    const target = event.target as HTMLElement;
@@ -124,12 +136,14 @@ navigations.addEventListener('click', (event) => {
          if (target.classList.contains('nav--active')) {
             return undefined
          } else {
+            offset = 0;
             characterWrapper.innerHTML = '';
             navigations.querySelector('.nav--active').classList.remove('nav--active');
             target.classList.add('nav--active')
          }
          // Если уже есть полученные данные, вевести карточки на основе полученных данных
          if (checkedComics.length !== 0) {
+            console.log('here')
             characterWrapper.innerHTML = '';
             for (let item of checkedComics[0]) {
                //setItem(item)
@@ -137,7 +151,7 @@ navigations.addEventListener('click', (event) => {
             }
 
          } else {
-            show(`${baseUrl}/public/comics?offset=${offset}?limit=20&apikey=${apiKey}`);
+            show(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`);
          }
          break;
       }
@@ -145,6 +159,7 @@ navigations.addEventListener('click', (event) => {
          if (target.classList.contains('nav--active')) {
             return undefined
          } else {
+            offset = 0;
             characterWrapper.innerHTML = '';
             navigations.querySelector('.nav--active').classList.remove('nav--active');
             target.classList.add('nav--active')
@@ -156,7 +171,7 @@ navigations.addEventListener('click', (event) => {
                setItem.bind(item)(item)
             }
          } else {
-            show(`${baseUrl}/public/characters?offset=${offset}?limit=20&apikey=${apiKey}`)
+            show(`${baseUrl}/public/characters?offset=${offset}?limit=30&apikey=${apiKey}`)
          }
          break;
       }
@@ -164,7 +179,6 @@ navigations.addEventListener('click', (event) => {
 })
 
 function setItem(item) {
-   console.log(this)
    let imagePath = item.images ? item.images[0].path : item.thumbnail.path
    let extension = item.images ? item.images[0].extension : item.thumbnail.extension;
    let title = item.name ? item.name : item.title;
@@ -179,7 +193,6 @@ function setItem(item) {
    </div>
    `
    newItem.addEventListener('click', () => openCardDescription(this))
-   console.log(newItem)
    characterWrapper.append(newItem);
 }
 function openCardDescription(cardInfo: Character)
@@ -191,8 +204,6 @@ function openCardDescription(cardInfo) {
    let image = cardInfo.thumbnail.path + '.' + cardInfo.thumbnail.extension
    cardInfo.title ? title = cardInfo.title : title = cardInfo.name;
    cardImg.src = image;
-   console.log(cardImg)
-   console.log(description)
    cardTitle.innerHTML = title;
    cardDescription.innerHTML = description;
 }
@@ -204,8 +215,85 @@ const cardDescription = card.querySelector('.item-card__description');
 const cardClose = card.querySelector('.item-card--close');
 
 cardClose.addEventListener('click', () => {
-   console.log('done')
-   card.classList.remove('item-card--active')
+   card.classList.remove('item-card--active');
 });
+
+function setPreloader() {
+   characterWrapper.innerHTML += `
+   <div class='preloader'>
+      <img class='preloader-image' src='./assets/img/preloader.svg'>
+   </div>
+   `
+}
+
+//-----------------------Pagination-----------------------------------------
+
+const paginationContainer = document.getElementById('pagination');
+
+paginationContainer.addEventListener('click', (event) => {
+   const target = event.target as HTMLElement;
+   const paginationNum = paginationContainer.querySelector('.pagination--active');
+   switch (target.id) {
+      case 'next':
+         paginationNum.textContent = String(Number(paginationNum.textContent) + 1)
+         offset += 30;
+         checkedOffset++;
+         //console.log(offset)
+         //console.log(paginationNum.textContent)
+         //console.log()
+         if (isComic() === true) {
+            if (checkedComics.length > checkedOffset) {
+               console.log(checkedComics.length)
+               console.log(checkedOffset)
+               characterWrapper.innerHTML = '';
+               console.log(checkedComics)
+               for (let item of checkedComics[checkedOffset]) {
+                  setItem.bind(item)(item)
+               }
+            } else {
+               show(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`)
+            }
+         } else {
+            if (checkedCharacters.length === checkedOffset) {
+               characterWrapper.innerHTML = '';
+               console.log(checkedCharacters)
+               for (let item of checkedCharacters[checkedOffset]) {
+                  setItem.bind(item)(item)
+               }
+            } else {
+               show(`${baseUrl}/public/characters?offset=${offset}?limit=30&apikey=${apiKey}`)
+            }
+
+         }
+         //isComic() === true ? show(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`) : show(`${baseUrl}/public/characters?offset=${offset}?limit=30&apikey=${apiKey}`)
+         break;
+      case 'previous':
+         paginationNum.textContent === '1' ? false : true;
+         paginationNum.textContent = String(Number(paginationNum.textContent) - 1)
+         //console.log(paginationNum.textContent)
+         offset -= 30;
+         checkedOffset--;
+         console.log(offset)
+         if (isComic() === true) {
+            characterWrapper.innerHTML = '';
+            console.log(checkedComics)
+            for (let item of checkedComics[checkedOffset]) {
+               setItem.bind(item)(item)
+            }
+         } else {
+            characterWrapper.innerHTML = '';
+            console.log(checkedComics)
+            for (let item of checkedCharacters[checkedOffset]) {
+               setItem.bind(item)(item)
+            }
+         }
+         //isComic() === true ? 
+         //isComic() === true ? show(`${baseUrl}/public/comics?offset=${offset}?limit=30&apikey=${apiKey}`) : show(`${baseUrl}/public/characters?offset=${offset}?limit=30&apikey=${apiKey}`)
+         break;
+   }
+
+})
+
+
 
 //document.querySelector('#re').addEventListener('click', () => cardDescription.classList.add('item-card--active'))
