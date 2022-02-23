@@ -5,7 +5,7 @@ import './openCard';
 import './pagination';
 import './setItem';
 import {
-   characterWrapper, apiKey, baseUrl, navigations, checkedComics, checkedCharacters, checkedItems, iterationLimit, iterationOffset, paginationNum
+   characterWrapper, apiKey, baseUrl, navigations, checkedComics, checkedCharacters, checkedItems, iterationLimit, iterationOffset, paginationNum, requestVariables
 } from './variables';
 import { setItem } from './setItem';
 
@@ -17,10 +17,6 @@ const isComic = (): boolean => {
    }
 }
 
-let checkedOffset = 0;
-let offset = 0;
-let characterOffset;
-let comicOffset;
 function getTwelve(url) {
    setPreloader();
    function getResponse(url): Promise<DataResult> {
@@ -70,11 +66,11 @@ function getTwelve(url) {
       sort(dataResult)
 
       if (checkedItems.length !== 12) {
-         offset += iterationOffset;
+         requestVariables.offset += iterationOffset;
          if (isComic() === true) {
-            return getTwelve(`${baseUrl}/public/comics?offset=${offset}?limit=${iterationLimit}&apikey=${apiKey}`)
+            return getTwelve(`${baseUrl}/public/comics?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
          } else {
-            return getTwelve(`${baseUrl}/public/characters?offset=${offset}?limit=${iterationLimit}&apikey=${apiKey}`)
+            return getTwelve(`${baseUrl}/public/characters?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
          }
       }
    })
@@ -86,57 +82,17 @@ function show(url: string) {
       let items;
       if (checkedItems[0].images) {
          checkedComics.push([...checkedItems])
-         items = checkedComics[checkedOffset]
+         items = checkedComics[requestVariables.checkedOffset]
       } else {
          checkedCharacters.push([...checkedItems])
-         items = checkedCharacters[checkedOffset]
+         items = checkedCharacters[requestVariables.checkedOffset]
       }
       for (let item of items) {
          setItem.bind(item)(item)
       }
    })
 }
-show(`${baseUrl}/public/comics?offset=${offset}?limit=${iterationLimit}&apikey=${apiKey}`)
-
-//function setItem(item) {
-//   let imagePath = item.images ? item.images[0].path : item.thumbnail.path
-//   let extension = item.images ? item.images[0].extension : item.thumbnail.extension;
-//   let title = item.name ? item.name : item.title;
-//   const newItem = document.createElement('div');
-//   newItem.classList.add('character-item');
-//   newItem.innerHTML = `
-//   <div class="character-item__picture">
-//      <img src="${imagePath}.${extension}" alt="${title}" srcset="">
-//   </div>
-//   <div class="character-item__name">
-//      ${title}
-//   </div>
-//   `
-//   newItem.addEventListener('click', () => openCardDescription(this))
-//   characterWrapper.append(newItem);
-//}
-//function openCardDescription(cardInfo: Character)
-//function openCardDescription(cardInfo: Comic)
-//function openCardDescription(cardInfo) {
-//   card.classList.add('item-card--active');
-//   let title: string;
-//   let description = cardInfo.description;
-//   let image = cardInfo.thumbnail.path + '.' + cardInfo.thumbnail.extension
-//   cardInfo.title ? title = cardInfo.title : title = cardInfo.name;
-//   cardImg.src = image;
-//   cardTitle.innerHTML = title;
-//   cardDescription.innerHTML = description;
-//}
-
-//const card = document.getElementById('card-description');
-//const cardImg: HTMLImageElement = card.querySelector('.item-card__img');
-//const cardTitle = card.querySelector('.item-card__title');
-//const cardDescription = card.querySelector('.item-card__description');
-//const cardClose = card.querySelector('.item-card--close');
-
-//cardClose.addEventListener('click', () => {
-//   card.classList.remove('item-card--active');
-//});
+show(`${baseUrl}/public/comics?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
 
 function setPreloader() {
    characterWrapper.innerHTML += `
@@ -145,5 +101,5 @@ function setPreloader() {
    </div>
    `
 }
-const exportItem = { offset, checkedOffset, comicOffset, characterOffset }
-export { exportItem, offset, iterationLimit, show, isComic, checkedCharacters, checkedComics }
+
+export { iterationLimit, show, isComic, checkedCharacters, checkedComics }

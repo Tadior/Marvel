@@ -1,8 +1,7 @@
-//-----------------------Pagination-----------------------------------------
 import {
-   characterWrapper, apiKey, baseUrl, paginationContainer, paginationNum, iterationOffset, iterationLimit,
+   characterWrapper, apiKey, baseUrl, paginationContainer, paginationNum, iterationOffset, iterationLimit, requestVariables
 } from './variables';
-import { exportItem, offset, show, isComic, checkedCharacters, checkedComics } from './index';
+import { show, isComic, checkedCharacters, checkedComics } from './index';
 import { setItem } from './setItem';
 
 paginationContainer.addEventListener('click', (event) => {
@@ -10,27 +9,27 @@ paginationContainer.addEventListener('click', (event) => {
    switch (target.id) {
       case 'next':
          paginationNum.textContent = String(Number(paginationNum.textContent) + 1)
-         exportItem.offset += iterationOffset;
-         exportItem.checkedOffset++;
+         requestVariables.offset += iterationOffset;
+         requestVariables.checkedOffset++;
          if (isComic() === true) {
-            if (checkedComics.length > exportItem.checkedOffset) {
+            if (checkedComics.length > requestVariables.checkedOffset) {
                characterWrapper.innerHTML = '';
-               for (let item of checkedComics[exportItem.checkedOffset]) {
+               for (let item of checkedComics[requestVariables.checkedOffset]) {
                   setItem.bind(item)(item)
                }
             } else {
-               exportItem.comicOffset = exportItem.offset;
-               show(`${baseUrl}/public/comics?offset=${offset}?limit=${iterationLimit}&apikey=${apiKey}`)
+               requestVariables.comicOffset = requestVariables.offset;
+               show(`${baseUrl}/public/comics?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
             }
          } else {
-            if (checkedCharacters.length > exportItem.checkedOffset) {
+            if (checkedCharacters.length > requestVariables.checkedOffset) {
                characterWrapper.innerHTML = '';
-               for (let item of checkedCharacters[exportItem.checkedOffset]) {
+               for (let item of checkedCharacters[requestVariables.checkedOffset]) {
                   setItem.bind(item)(item)
                }
             } else {
-               exportItem.characterOffset = offset;
-               show(`${baseUrl}/public/characters?offset=${offset}?limit=${iterationLimit}&apikey=${apiKey}`)
+               requestVariables.characterOffset = requestVariables.offset;
+               show(`${baseUrl}/public/characters?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
             }
 
          }
@@ -40,16 +39,16 @@ paginationContainer.addEventListener('click', (event) => {
             return false;
          }
          paginationNum.textContent = String(Number(paginationNum.textContent) - 1)
-         exportItem.offset -= iterationOffset;
-         exportItem.checkedOffset--;
+         requestVariables.offset -= iterationOffset;
+         requestVariables.checkedOffset--;
          if (isComic() === true) {
             characterWrapper.innerHTML = '';
-            for (let item of checkedComics[exportItem.checkedOffset]) {
+            for (let item of checkedComics[requestVariables.checkedOffset]) {
                setItem.bind(item)(item)
             }
          } else {
             characterWrapper.innerHTML = '';
-            for (let item of checkedCharacters[exportItem.checkedOffset]) {
+            for (let item of checkedCharacters[requestVariables.checkedOffset]) {
                setItem.bind(item)(item)
             }
          }

@@ -22,6 +22,12 @@ const cardTitle = card.querySelector('.item-card__title');
 const cardDescription = card.querySelector('.item-card__description');
 const cardClose = card.querySelector('.item-card--close');
 
+let checkedOffset = 0;
+let offset = 0;
+let characterOffset;
+let comicOffset;
+const requestVariables = { checkedOffset, offset, characterOffset, comicOffset };
+
 export {
-   characterWrapper, apiKey, baseUrl, searchByComic, searchByCharacter, searchByNameStart, navigations, mainContainer, paginationContainer, paginationNum, checkedComics, checkedCharacters, checkedItems, iterationOffset, iterationLimit, card, cardImg, cardClose, cardDescription, cardTitle
+   characterWrapper, apiKey, baseUrl, searchByComic, searchByCharacter, searchByNameStart, navigations, mainContainer, paginationContainer, paginationNum, checkedComics, checkedCharacters, checkedItems, iterationOffset, iterationLimit, card, cardImg, cardClose, cardDescription, cardTitle, requestVariables
 }
