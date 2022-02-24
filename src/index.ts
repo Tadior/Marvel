@@ -4,6 +4,7 @@ import './navigation';
 import './openCard';
 import './pagination';
 import './setItem';
+import './search';
 import {
    characterWrapper, apiKey, baseUrl, navigations, checkedComics, checkedCharacters, checkedItems, iterationLimit, iterationOffset, paginationNum, requestVariables
 } from './variables';
@@ -17,12 +18,13 @@ const isComic = (): boolean => {
    }
 }
 
+function getResponse(url): Promise<DataResult> {
+   let response = fetch(url).then(data => data.json());
+   return response;
+}
+
 function getTwelve(url) {
    setPreloader();
-   function getResponse(url): Promise<DataResult> {
-      let response = fetch(url).then(data => data.json());
-      return response;
-   }
    return getResponse(url).then(response => {
       const dataResult = response.data.results as DataResult;
       characterWrapper.innerHTML = '';
@@ -102,4 +104,4 @@ function setPreloader() {
    `
 }
 
-export { iterationLimit, show, isComic, checkedCharacters, checkedComics }
+export { iterationLimit, show, isComic, checkedCharacters, checkedComics, getResponse }

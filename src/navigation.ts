@@ -1,8 +1,9 @@
 import {
-   characterWrapper, apiKey, baseUrl, navigations, paginationNum, iterationLimit, requestVariables
+   characterWrapper, apiKey, baseUrl, navigations, paginationNum, iterationLimit, requestVariables, paginationContainer
 } from './variables';
 import { show, checkedCharacters, checkedComics } from './index';
 import { setItem } from './setItem';
+import { isSearch, setSearch, clearSearch } from './search';
 
 navigations.addEventListener('click', (event) => {
    const target = event.target as HTMLElement;
@@ -24,17 +25,45 @@ navigations.addEventListener('click', (event) => {
          selectCategory('characters')
          break;
       }
+      case 'searching': {
+         if (target.classList.contains('nav--active')) {
+            return undefined
+         }
+         selectCategory('searching')
+         //search();
+         break;
+      }
    }
    function selectCategory(item: string) {
       let itemOffset: number;
       let checkedItems;
-      if (item === 'characters') {
-         itemOffset = requestVariables.characterOffset;
-         checkedItems = checkedCharacters;
-      } else if (item === 'comic') {
-         itemOffset = requestVariables.comicOffset;
-         checkedItems = checkedComics;
+      //paginationContainer.classList.contains('pagination--fade') ? paginationContainer.classList.remove('pagination--fade') : true;
+      if (isSearch()) {
+         clearSearch();
+         paginationContainer.classList.remove('pagination--fade');
       }
+      switch (item) {
+         case 'comic': {
+            itemOffset = requestVariables.comicOffset;
+            checkedItems = checkedComics;
+            break;
+         }
+         case 'characters': {
+            itemOffset = requestVariables.characterOffset;
+            checkedItems = checkedCharacters;
+            break;
+         }
+         case 'searching': {
+            setSearch();
+            navigations.querySelector('.nav--active').classList.remove('nav--active');
+            target.classList.add('nav--active')
+            return undefined
+         }
+      }
+      //if (itemOffset === undefined) {
+      //   console.log('here')
+      //   return undefined;
+      //} else
       if (itemOffset > 0) {
          requestVariables.offset = itemOffset;
       } else if (itemOffset < requestVariables.offset) {

@@ -42,12 +42,16 @@
 .search{
    flex: 0 0 300px;
    margin: 20px auto 0;
-   &-input {
-      width: 100%;
+   text-align: center;
+   &__input {
+      max-width: 300px;
       padding: 5px 10px;
       outline: none;
       border: 2px solid black;
       border-radius: 10px;
+      &:focus {
+         border-color: red;
+      }
    }
 }
 .nav--active {
@@ -86,6 +90,9 @@
    &--active {
       background: red;
       color: #fff;
+   }
+   &--fade {
+      display: none;
    }
 }
 .item-card {
