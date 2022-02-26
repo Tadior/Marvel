@@ -28,3 +28,6 @@ interface Comic extends DataResultItem {
       extension: string;
    }]
 }
+interface Creator extends DataResultItem {
+   fullName: string;
+}

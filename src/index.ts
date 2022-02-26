@@ -24,10 +24,12 @@ function getResponse(url): Promise<DataResult> {
 }
 
 function getTwelve(url) {
-   setPreloader();
+   if (!characterWrapper.contains(characterWrapper.querySelector('.preloader'))) {
+      characterWrapper.innerHTML = '';
+      setPreloader();
+   }
    return getResponse(url).then(response => {
       const dataResult = response.data.results as DataResult;
-      characterWrapper.innerHTML = '';
 
       function sort(array: DataResult): void {
          if (array[0].images) {
@@ -75,12 +77,13 @@ function getTwelve(url) {
             return getTwelve(`${baseUrl}/public/characters?offset=${requestVariables.offset}?limit=${iterationLimit}&apikey=${apiKey}`)
          }
       }
-   })
+   }).catch((error) => alert("Error, we're working on this problem"));
 }
 
 function show(url: string) {
    checkedItems.splice(0, checkedItems.length = 0);
    getTwelve(url).then(() => {
+      characterWrapper.innerHTML = '';
       let items;
       if (checkedItems[0].images) {
          checkedComics.push([...checkedItems])

@@ -30,17 +30,16 @@ navigations.addEventListener('click', (event) => {
             return undefined
          }
          selectCategory('searching')
-         //search();
          break;
       }
    }
    function selectCategory(item: string) {
       let itemOffset: number;
       let checkedItems;
-      //paginationContainer.classList.contains('pagination--fade') ? paginationContainer.classList.remove('pagination--fade') : true;
       if (isSearch()) {
          clearSearch();
          paginationContainer.classList.remove('pagination--fade');
+         document.querySelector('.search-by').remove();
       }
       switch (item) {
          case 'comic': {
@@ -60,10 +59,6 @@ navigations.addEventListener('click', (event) => {
             return undefined
          }
       }
-      //if (itemOffset === undefined) {
-      //   console.log('here')
-      //   return undefined;
-      //} else
       if (itemOffset > 0) {
          requestVariables.offset = itemOffset;
       } else if (itemOffset < requestVariables.offset) {

@@ -53,7 +53,7 @@ const optimization = () => {
                }
             }
          })
-      ]
+      ];
    }
    return config;
 };
@@ -66,12 +66,12 @@ const cssLoaders = extra => {
          loader: MiniCssExtractPlugin.loader,
       },
       'css-loader'
-   ]
+   ];
    if (extra) {
       loaders.push(extra);
    }
    return loaders;
-}
+};
 
 module.exports = {
    context: path.resolve(__dirname, 'src'),
@@ -169,4 +169,4 @@ module.exports = {
          }
       ],
    }
-}
+};
