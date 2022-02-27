@@ -102,7 +102,7 @@ show(`${baseUrl}/public/comics?offset=${requestVariables.offset}?limit=${iterati
 function setPreloader() {
    characterWrapper.innerHTML += `
    <div class='preloader'>
-      <img class='preloader-image' src='./assets/img/preloader.svg'>
+      <img class='preloader-image' src='${require('./assets/img/preloader.svg')}'>
    </div>
    `
 }

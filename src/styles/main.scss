@@ -64,7 +64,7 @@
    align-items: center;
    text-align: center;
    width: 100%;
-   height: calc(100vh - 110px);
+   height: calc(100vh - 125px);
    &-image {
       max-width: 150px;
    }
@@ -225,7 +225,28 @@
    }
 }
 @media (max-width: 500px) {
-   .item-card__image {
-      display: none;
+   .main {
+      background-position: center;
+   }
+   .item-card__image{
+      max-width: 200px;
+      margin: 0 auto;
+   }
+   .preloader-image {
+      max-width: 100px;
+   }
+}
+@media (max-width: 400px) {
+   header .container {
+      padding: 0;
+   }
+   .navigation-list {
+      justify-content: center;
+   }
+   .character-item {
+      flex: 0 1 250px;
+      &__picture img {
+         height: 379px  ;
+      }
    }
 }
